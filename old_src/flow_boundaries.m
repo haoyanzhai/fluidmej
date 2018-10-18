@@ -1,13 +1,29 @@
-function [boundaries, intersection_pts] = flow_boundaries(field)
+function [boundaries, intersection_pts] = flow_boundaries(field, starting_pos)
 % from the flow field data, first divide the flow field into regions
 % according to the flow speed information at each position. Then find the
-% boundaries of the regions.
+% boundaries of the regions, and intersection points of the boundaries.
 
+% Input:
 % field.lon/ field.lat: Lon/Lat grid vectors;
 % field.vcx/ field.vcy: horizontal/vertical flow data at each position.
+% starting_pos: coloum vector of vehicle starting position.
+
+% Output:
+% boundaries:
+% boundaries.boudary_no_n1n2: boundary between region n1 and region n2
+% (n1>n2).
+% boundaries.boudary_no_n1n2(:,1): Lon.
+% boundaries.boudary_no_n1n2(:,2): Lat.
+
+% intersection_pts:
+% intersection_pts.reg_no(n,:): region number for the boundaries of the nth
+% intersection point.
+% intersection_pts.pos(n,:): position of the nth intersection point ([Lon, Lat]).  
 
 % Mengxue Hou
-% Georgia Institute of Technology, 2018/4
+% Georgia Institute of Technology, 2018/10
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
 %% Divide the flow field into regions using K-means
 
@@ -42,23 +58,29 @@ gridy = reshape(yy, [nx*ny, 1]);
 
 X = [vcx, vcy, gridx/nx, gridy/ny];
 
-% for k=2:5
-k = 6;
+k = 7;
 opts = statset('Display','final');
 [idx,C] = kmeans(X,k,'Distance','sqeuclidean',...
     'Replicates',5,'Options',opts);
 
-figure
-Marker = ['r.'; 'b.';'g.';'c.';'y.';'k.'];
 for ii = 1:k
-    Regions.no = ii;
-    Regions.lon{ii} = round(X(idx==ii,3)*nx);
-    Regions.lat{ii} = round(X(idx==ii,4)*ny);
-    Regions.vx{ii} = X(idx==ii,1);
-    Regions.vy{ii} = X(idx==ii,2);
+    distance_to_orig(ii) = norm([C(ii,3)*nx, C(ii,4)*ny] - starting_pos');
+end
+
+[~, c_idx] = sort(distance_to_orig);
+
+figure
+Marker = jet(k);
+for n_idx = 1:k
+    ii = c_idx(n_idx);
+    Regions.no = n_idx;
+    Regions.lon{n_idx} = round(X(idx==ii,3)*nx);
+    Regions.lat{n_idx} = round(X(idx==ii,4)*ny);
+    Regions.vx{n_idx} = X(idx==ii,1);
+    Regions.vy{n_idx} = X(idx==ii,2);
     
-    plot(Regions.lon{ii},Regions.lat{ii}, Marker(ii,:));hold on;
-    plot(C(ii,3)*nx, C(ii,4)*ny, 'ko');hold on;
+    plot(Regions.lon{n_idx},Regions.lat{n_idx}, 'color', Marker(n_idx,:), 'Marker', '.', 'LineStyle', 'none');hold on;
+    plot(C(n_idx,3)*nx, C(n_idx,4)*ny, 'ko');hold on;
 end
 axis([min(lon), max(lon), min(lat), max(lat)]);
 
