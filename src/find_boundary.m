@@ -17,7 +17,7 @@ function boundary = find_boundary(boundaries, n1, n2)
 % Mengxue Hou, Georgia Institute of Technology
 % 10/2018
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 b_name = ['boundary_no_', num2str(n1), num2str(n2)];
 boundary = getfield(boundaries, b_name);
