@@ -1,6 +1,6 @@
 function region_no = find_region(regions, boundary_pt_x, boundary_pt_y)
 
-% Given a point on one boundary transect, find the number of neighboring flow regions.
+% Given a point on one boundary transect, find the indeex of the neighboring flow regions.
 
 % Example: 
 % region_no = find_region(regions, boundary_pt_x, boundary_pt_y);
@@ -13,7 +13,7 @@ function region_no = find_region(regions, boundary_pt_x, boundary_pt_y)
 % boundary_pt_y: Lat
 
 % Output: 
-% region_no: Row vector. Region number of the neighboring grid points of the boundary.
+% region_no: Row vector. Region index number of the neighboring grid points of the boundary.
 % [n_1, n_2, ..., n_N], (n_1>n_2>...>n_N)
 
 % Mengxue Hou, Georgia Institute of Technology
